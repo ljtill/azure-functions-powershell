@@ -3,5 +3,8 @@
   "managedDependency": {
     "enabled": true
   },
-  "functions": []
+  "functions": [
+    "HttpTrigger",
+    "TimerTrigger"
+  ]
 }
