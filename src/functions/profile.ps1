@@ -1,0 +1,32 @@
+# Azure Functions profile.ps1
+#
+# This profile.ps1 will get executed every "cold start" of your Function App.
+# "cold start" occurs when:
+#
+# * A Function App starts up for the very first time
+# * A Function App starts up after being de-allocated due to inactivity
+#
+# You can define helper functions, run commands, or specify environment variables
+# NOTE: any variables defined that are not environment variables will get reset after the first execution
+
+# Authenticate with Azure PowerShell using MSI.
+# Remove this if you are not planning on using MSI or Azure PowerShell.
+
+Get-AzContext -ListAvailable | Remove-AzContext -Force
+
+if ($env:MSI_SECRET -and (Get-Module -ListAvailable Az.Accounts)) {
+    Connect-AzAccount -Identity
+}
+else {
+    $tenantId = [Environment]::GetEnvironmentVariable("AzureADTenantId")
+    $applicationId = [Environment]::GetEnvironmentVariable("AzureADApplicationId")
+    $clientSecret = ConvertTo-SecureString -String ([Environment]::GetEnvironmentVariable("AzureADClientSecret")) -AsPlainText -Force
+    $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $applicationId, $clientSecret
+    Connect-AzAccount -Credential $credential -Tenant $tenantId -ServicePrincipal
+}
+
+# Uncomment the next line to enable legacy AzureRm alias in Azure PowerShell.
+# Enable-AzureRmAlias
+
+# You can also define functions or aliases that can be referenced in any of your PowerShell functions.
+
