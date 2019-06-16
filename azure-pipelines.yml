@@ -42,9 +42,9 @@ stages:
         location: $(locationName)
         csmFile: '$(System.DefaultWorkingDirectory)/src/templates/azuredeploy.json'
         overrideParameters: |
-          -storageAccountName $(storageAccountName) 
-          -componentName $(componentName) 
-          -serverfarmName $(serverfarmName) 
+          -storageAccountName $(storageAccountName)
+          -componentName $(componentName)
+          -serverfarmName $(serverfarmName)
           -siteName $(siteName)
           -keyVaultName $(keyVaultName)
         deploymentMode: Validation
@@ -57,9 +57,9 @@ stages:
         location: $(locationName)
         csmFile: '$(System.DefaultWorkingDirectory)/src/templates/azuredeploy.json'
         overrideParameters: |
-          -storageAccountName $(storageAccountName) 
-          -componentName $(componentName) 
-          -serverfarmName $(serverfarmName) 
+          -storageAccountName $(storageAccountName)
+          -componentName $(componentName)
+          -serverfarmName $(serverfarmName)
           -siteName $(siteName)
           -keyVaultName $(keyVaultName)
         deploymentMode: Complete
@@ -85,6 +85,6 @@ stages:
       inputs:
         azureSubscription: $(subscription)
         appType: functionApp
-        appName: '$(siteName)'
+        appName: $(siteName)
         package: $(Build.ArtifactStagingDirectory)/**/*.zip
     dependsOn: 'Templates'
