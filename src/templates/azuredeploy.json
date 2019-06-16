@@ -5,9 +5,6 @@
         "storageAccountName": {
             "type": "string"
         },
-        "keyVaultName": {
-            "type": "string"
-        },
         "componentName": {
             "type": "string"
         },
@@ -15,6 +12,9 @@
             "type": "string"
         },
         "siteName": {
+            "type": "string"
+        },
+        "keyVaultName": {
             "type": "string"
         }
     },
@@ -30,9 +30,6 @@
             "name": "[parameters('storageAccountName')]",
             "id": "[concat(resourceGroup().id, '/providers/', 'Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
         },
-        "keyVaults": {
-            "name": "[parameters('keyVaultName')]"
-        },
         "components": {
             "name": "[parameters('componentName')]"
         },
@@ -42,6 +39,9 @@
         },
         "sites": {
             "name": "[parameters('siteName')]"
+        },
+        "keyVaults": {
+            "name": "[parameters('keyVaultName')]"
         }
     },
     "resources": [
