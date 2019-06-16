@@ -46,6 +46,7 @@ stages:
           -componentName $(componentName) 
           -serverfarmName $(serverfarmName) 
           -siteName $(siteName)
+          -keyVaultName $(keyVaultName)
         deploymentMode: Validation
     - task: AzureResourceGroupDeployment@2
       displayName: 'Templates : Complete'
@@ -60,6 +61,7 @@ stages:
           -componentName $(componentName) 
           -serverfarmName $(serverfarmName) 
           -siteName $(siteName)
+          -keyVaultName $(keyVaultName)
         deploymentMode: Complete
         deploymentName: Microsoft.VisualStudio
   - job: 'Functions'
