@@ -96,7 +96,7 @@
                     "appSettings": [
                         {
                             "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccounts')['name'], ';AccountKey=', listKeys(variables('storageAccounts')['id'], variables('apiVersion')['storageAccounts']).keys[0]['value'])]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccounts')['name'], ';AccountKey=', listKeys(variables('storageAccounts')['id'], variables('apiVersions')['storageAccounts']).keys[0]['value'])]"
                         },
                         {
                             "name": "FUNCTIONS_WORKER_RUNTIME",
