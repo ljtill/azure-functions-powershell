@@ -20,6 +20,8 @@ variables:
     value: ''
   - name: siteName
     value: ''
+  - name: keyVaultName
+    value: ''
 
 stages:
 - stage: 'Build'
