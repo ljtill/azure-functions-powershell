@@ -117,7 +117,7 @@
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
-                            "value": "[concat(toLower(variables('sites')['name']), take(newGuid(), 4))]"
+                            "value": "[concat(toLower(variables('sites')['name']), take(guid(resourceGroup().id), 4))]"
                         }
                     ]
                 },
