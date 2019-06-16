@@ -41,12 +41,7 @@ stages:
         resourceGroupName: $(resourceGroupName)
         location: $(locationName)
         csmFile: '$(System.DefaultWorkingDirectory)/src/templates/azuredeploy.json'
-        overrideParameters: |
-          -storageAccountName $(storageAccountName)
-          -componentName $(componentName)
-          -serverfarmName $(serverfarmName)
-          -siteName $(siteName)
-          -keyVaultName $(keyVaultName)
+        overrideParameters: -storageAccountName $(storageAccountName) -componentName $(componentName) -serverfarmName $(serverfarmName) -siteName $(siteName) -keyVaultName $(keyVaultName)
         deploymentMode: Validation
     - task: AzureResourceGroupDeployment@2
       displayName: 'Templates : Complete'
@@ -56,12 +51,7 @@ stages:
         resourceGroupName: $(resourceGroupName)
         location: $(locationName)
         csmFile: '$(System.DefaultWorkingDirectory)/src/templates/azuredeploy.json'
-        overrideParameters: |
-          -storageAccountName $(storageAccountName)
-          -componentName $(componentName)
-          -serverfarmName $(serverfarmName)
-          -siteName $(siteName)
-          -keyVaultName $(keyVaultName)
+        overrideParameters: -storageAccountName $(storageAccountName) -componentName $(componentName) -serverfarmName $(serverfarmName) -siteName $(siteName) -keyVaultName $(keyVaultName)
         deploymentMode: Complete
         deploymentName: Microsoft.VisualStudio
   - job: 'Functions'
