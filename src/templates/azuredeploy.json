@@ -5,6 +5,9 @@
         "storageAccountName": {
             "type": "string"
         },
+        "keyVaultName": {
+            "type": "string"
+        },
         "componentName": {
             "type": "string"
         },
@@ -16,7 +19,7 @@
         }
     },
     "variables": {
-        "apiVersion": {
+        "apiVersions": {
             "storageAccounts": "2019-04-01",
             "components": "2015-05-01",
             "serverfarms": "2018-02-01",
@@ -25,6 +28,9 @@
         "storageAccounts": {
             "name": "[parameters('storageAccountName')]",
             "id": "[concat(resourceGroup().id, '/providers/', 'Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+        },
+        "keyVaults": {
+            "name": "[parameters('keyVaultName')]"
         },
         "components": {
             "name": "[parameters('componentName')]"
@@ -42,7 +48,7 @@
             "comments": "Storage Account",
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('storageAccounts')['name']]",
-            "apiVersion": "[variables('apiVersion')['storageAccounts']]",
+            "apiVersion": "[variables('apiVersions')['storageAccounts']]",
             "location": "[resourceGroup().location]",
             "kind": "StorageV2",
             "sku": {
@@ -54,7 +60,7 @@
             "comments": "Application Insight",
             "type": "Microsoft.Insights/components",
             "name": "[variables('components')['name']]",
-            "apiVersion": "[variables('apiVersion')['components']]",
+            "apiVersion": "[variables('apiVersions')['components']]",
             "location": "[resourceGroup().location]",
             "kind": "web",
             "properties": {
@@ -66,7 +72,7 @@
             "comments": "Server Farm",
             "type": "Microsoft.Web/serverfarms",
             "name": "[variables('serverfarms')['name']]",
-            "apiVersion": "[variables('apiVersion')['serverfarms']]",
+            "apiVersion": "[variables('apiVersions')['serverfarms']]",
             "location": "[resourceGroup().location]",
             "properties": {},
             "sku": {
@@ -78,7 +84,7 @@
             "comments": "Function App",
             "type": "Microsoft.Web/sites",
             "name": "[variables('sites')['name']]",
-            "apiVersion": "[variables('apiVersion')['sites']]",
+            "apiVersion": "[variables('apiVersions')['sites']]",
             "location": "[resourceGroup().location]",
             "kind": "functionapp",
             "identity": {
@@ -104,6 +110,34 @@
                 "[variables('storageAccounts')['name']]",
                 "[variables('components')['name']]",
                 "[variables('serverfarms')['name']]"
+            ]
+        },
+        {
+            "comments": "Key Vault",
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[variables('keyVaults')['name']]",
+            "apiVersion": "[variables('apiVersions')['keyVaults']]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "tenantId": "[subscription().tenantId]",
+                "sku": {
+                    "family": "A",
+                    "name": "Standard"
+                },
+                "accessPolicies": [
+                    {
+                        "tenantId": "[subscription().tenantId]",
+                        "objectId": "[reference(concat('Microsoft.Web/sites/', variables('sites')['name']), variables('apiVersions')['sites'], 'Full').identity.principalId]",
+                        "permissions": {
+                            "secrets": [
+                                "get"
+                            ]
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[variables('sites')['name']]"
             ]
         }
     ],
