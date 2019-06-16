@@ -6,28 +6,36 @@ param(
     [string]$ResourceGroupName = "",
 
     [Parameter()]
-    [string]$Mode = "Complete",
+    [string]$SubscriptionId = "",
 
     [Parameter()]
-    [string]$TemplateFile = "azuredeploy.json",
+    [string]$Mode = "",
 
     [Parameter()]
-    [string]$TemplateParameterFile = "azuredeploy.parameters.json"
+    [string]$TemplateFile = "azuredeploy.json"
 )
 
 begin {
     $path = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent)
+    $parameters = @{
+        StorageAccountName = ""
+        ComponentName      = ""
+        ServerfarmName     = ""
+        SiteName           = ""
+        KeyVaultName       = ""
+    }
     $params = @{
-        Name                  = $name
-        ResourceGroupName     = $resourceGroupName
-        Mode                  = $mode
-        TemplateFile          = ($path + "/src/templates/" + $templateFile)
-        TemplateParameterFile = ($path + "/src/templates/" + $templateParameterFile)
-        Force                 = $true
+        Name                    = $name
+        ResourceGroupName       = $resourceGroupName
+        Mode                    = $mode
+        TemplateFile            = ($path + "/templates/" + $templateFile)
+        TemplateParameterObject = $parameters
+        Force                   = $true
     }
 }
 
 process {
+    Set-AzContext -SubscriptionId $subscriptionId | Out-Null
     New-AzResourceGroupDeployment @params
 }
 
