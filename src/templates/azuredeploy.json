@@ -23,7 +23,8 @@
             "storageAccounts": "2019-04-01",
             "components": "2015-05-01",
             "serverfarms": "2018-02-01",
-            "sites": "2018-02-01"
+            "sites": "2018-02-01",
+            "keyVaults": "2018-02-14"
         },
         "storageAccounts": {
             "name": "[parameters('storageAccountName')]",
