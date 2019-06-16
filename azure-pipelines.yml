@@ -6,22 +6,7 @@ trigger:
     - develop
 
 variables:
-  - name: subscription
-    value: ''
-  - name: resourceGroupName
-    value: ''
-  - name: locationName
-    value: ''
-  - name: storageAccountName
-    value: ''
-  - name: componentName
-    value: ''
-  - name: serverfarmName
-    value: ''
-  - name: siteName
-    value: ''
-  - name: keyVaultName
-    value: ''
+- group: 'default'
 
 stages:
 - stage: 'Build'
