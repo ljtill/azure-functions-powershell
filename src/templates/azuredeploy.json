@@ -13,14 +13,18 @@
         },
         "siteName": {
             "type": "string"
+        },
+        "keyVaultName": {
+            "type": "string"
         }
     },
     "variables": {
-        "apiVersion": {
+        "apiVersions": {
             "storageAccounts": "2019-04-01",
             "components": "2015-05-01",
             "serverfarms": "2018-02-01",
-            "sites": "2018-02-01"
+            "sites": "2018-02-01",
+            "keyVaults": "2018-02-14"
         },
         "storageAccounts": {
             "name": "[parameters('storageAccountName')]",
@@ -35,6 +39,9 @@
         },
         "sites": {
             "name": "[parameters('siteName')]"
+        },
+        "keyVaults": {
+            "name": "[parameters('keyVaultName')]"
         }
     },
     "resources": [
@@ -42,7 +49,7 @@
             "comments": "Storage Account",
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('storageAccounts')['name']]",
-            "apiVersion": "[variables('apiVersion')['storageAccounts']]",
+            "apiVersion": "[variables('apiVersions')['storageAccounts']]",
             "location": "[resourceGroup().location]",
             "kind": "StorageV2",
             "sku": {
@@ -54,7 +61,7 @@
             "comments": "Application Insight",
             "type": "Microsoft.Insights/components",
             "name": "[variables('components')['name']]",
-            "apiVersion": "[variables('apiVersion')['components']]",
+            "apiVersion": "[variables('apiVersions')['components']]",
             "location": "[resourceGroup().location]",
             "kind": "web",
             "properties": {
@@ -66,7 +73,7 @@
             "comments": "Server Farm",
             "type": "Microsoft.Web/serverfarms",
             "name": "[variables('serverfarms')['name']]",
-            "apiVersion": "[variables('apiVersion')['serverfarms']]",
+            "apiVersion": "[variables('apiVersions')['serverfarms']]",
             "location": "[resourceGroup().location]",
             "properties": {},
             "sku": {
@@ -78,7 +85,7 @@
             "comments": "Function App",
             "type": "Microsoft.Web/sites",
             "name": "[variables('sites')['name']]",
-            "apiVersion": "[variables('apiVersion')['sites']]",
+            "apiVersion": "[variables('apiVersions')['sites']]",
             "location": "[resourceGroup().location]",
             "kind": "functionapp",
             "identity": {
@@ -89,12 +96,28 @@
                 "siteConfig": {
                     "appSettings": [
                         {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(concat('Microsoft.Insights/components/', variables('components')['name']), variables('apiVersions')['components']).InstrumentationKey]"
+                        },
+                        {
                             "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccounts')['name'], ';AccountKey=', listKeys(variables('storageAccounts')['id'], variables('apiVersion')['storageAccounts']).keys[0]['value'])]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccounts')['name'], ';AccountKey=', listKeys(variables('storageAccounts')['id'], variables('apiVersions')['storageAccounts']).keys[0]['value'])]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~2"
                         },
                         {
                             "name": "FUNCTIONS_WORKER_RUNTIME",
                             "value": "powershell"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccounts')['name'], ';AccountKey=', listKeys(variables('storageAccounts')['id'], variables('apiVersions')['storageAccounts']).keys[0]['value'])]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[concat(toLower(variables('sites')['name']), take(guid(resourceGroup().id), 4))]"
                         }
                     ]
                 },
@@ -104,6 +127,34 @@
                 "[variables('storageAccounts')['name']]",
                 "[variables('components')['name']]",
                 "[variables('serverfarms')['name']]"
+            ]
+        },
+        {
+            "comments": "Key Vault",
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[variables('keyVaults')['name']]",
+            "apiVersion": "[variables('apiVersions')['keyVaults']]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "tenantId": "[subscription().tenantId]",
+                "sku": {
+                    "family": "A",
+                    "name": "Standard"
+                },
+                "accessPolicies": [
+                    {
+                        "tenantId": "[subscription().tenantId]",
+                        "objectId": "[reference(concat('Microsoft.Web/sites/', variables('sites')['name']), variables('apiVersions')['sites'], 'Full').identity.principalId]",
+                        "permissions": {
+                            "secrets": [
+                                "get"
+                            ]
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[variables('sites')['name']]"
             ]
         }
     ],

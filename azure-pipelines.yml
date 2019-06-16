@@ -6,20 +6,7 @@ trigger:
     - develop
 
 variables:
-  - name: subscription
-    value: ''
-  - name: resourceGroupName
-    value: ''
-  - name: locationName
-    value: ''
-  - name: storageAccountName
-    value: ''
-  - name: componentName
-    value: ''
-  - name: serverfarmName
-    value: ''
-  - name: siteName
-    value: ''
+- group: 'default'
 
 stages:
 - stage: 'Build'
@@ -54,11 +41,7 @@ stages:
         resourceGroupName: $(resourceGroupName)
         location: $(locationName)
         csmFile: '$(System.DefaultWorkingDirectory)/src/templates/azuredeploy.json'
-        overrideParameters: |
-          -storageAccountName $(storageAccountName) 
-          -componentName $(componentName) 
-          -serverfarmName $(serverfarmName) 
-          -siteName $(siteName)
+        overrideParameters: -storageAccountName $(storageAccountName) -componentName $(componentName) -serverfarmName $(serverfarmName) -siteName $(siteName) -keyVaultName $(keyVaultName)
         deploymentMode: Validation
     - task: AzureResourceGroupDeployment@2
       displayName: 'Templates : Complete'
@@ -68,11 +51,7 @@ stages:
         resourceGroupName: $(resourceGroupName)
         location: $(locationName)
         csmFile: '$(System.DefaultWorkingDirectory)/src/templates/azuredeploy.json'
-        overrideParameters: |
-          -storageAccountName $(storageAccountName) 
-          -componentName $(componentName) 
-          -serverfarmName $(serverfarmName) 
-          -siteName $(siteName)
+        overrideParameters: -storageAccountName $(storageAccountName) -componentName $(componentName) -serverfarmName $(serverfarmName) -siteName $(siteName) -keyVaultName $(keyVaultName)
         deploymentMode: Complete
         deploymentName: Microsoft.VisualStudio
   - job: 'Functions'
@@ -90,12 +69,14 @@ stages:
       continueOnError: false
       inputs:
         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/src/functions'
+        includeRootFolder: false
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     - task: AzureFunctionApp@1
       displayName: Deploy
       continueOnError: false
       inputs:
         azureSubscription: $(subscription)
         appType: functionApp
-        appName: '$(siteName)'
-        package: $(Build.ArtifactStagingDirectory)/**/*.zip
+        appName: $(siteName)
+        package: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
     dependsOn: 'Templates'
