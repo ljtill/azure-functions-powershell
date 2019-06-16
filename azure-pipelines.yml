@@ -68,7 +68,7 @@ stages:
       displayName: Archive
       continueOnError: false
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/src/functions'
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/src/functions/'
     - task: AzureFunctionApp@1
       displayName: Deploy
       continueOnError: false
