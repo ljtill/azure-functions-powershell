@@ -1,8 +1,9 @@
 # Documentation
 
-## Azure DevOps - Documentation
+## Azure DevOps
 
 ### Variable group
+
 - subscription
 - resourceGroupName
 - locationName
