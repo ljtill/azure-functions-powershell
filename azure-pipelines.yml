@@ -9,7 +9,6 @@ variables:
 - group: 'default'
 
 stages:
-
 - stage: 'Build'
   jobs:
   - job: 'Artifacts'
@@ -22,7 +21,6 @@ stages:
       inputs:
         artifactName: artifacts
         targetPath: $(Build.SourcesDirectory)
-
 - stage: 'Release'
   jobs:
   - job: 'Templates'
@@ -55,8 +53,7 @@ stages:
         csmFile: '$(System.DefaultWorkingDirectory)/src/templates/azuredeploy.json'
         overrideParameters: -storageAccountName $(storageAccountName) -componentName $(componentName) -serverfarmName $(serverfarmName) -siteName $(siteName) -keyVaultName $(keyVaultName)
         deploymentMode: Incremental
-        deploymentName: Microsoft.AzureDevOps
-        
+        deploymentName: Microsoft.AzureDevOps     
   - job: 'Functions'
     pool:
       vmImage: 'ubuntu-latest'
@@ -79,7 +76,7 @@ stages:
       continueOnError: false
       inputs:
         azureSubscription: $(subscription)
-        appType: functionAppLinux
+        appType: functionApp
         appName: $(siteName)
         package: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
     dependsOn: 'Templates'
