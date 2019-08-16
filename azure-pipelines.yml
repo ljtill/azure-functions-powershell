@@ -44,7 +44,7 @@ stages:
         overrideParameters: -storageAccountName $(storageAccountName) -componentName $(componentName) -serverfarmName $(serverfarmName) -siteName $(siteName) -keyVaultName $(keyVaultName)
         deploymentMode: Validation
     - task: AzureResourceGroupDeployment@2
-      displayName: 'Templates : Complete'
+      displayName: 'Templates : Incremental'
       continueOnError: false
       inputs:
         azureSubscription: $(subscription)
@@ -52,8 +52,8 @@ stages:
         location: $(locationName)
         csmFile: '$(System.DefaultWorkingDirectory)/src/templates/azuredeploy.json'
         overrideParameters: -storageAccountName $(storageAccountName) -componentName $(componentName) -serverfarmName $(serverfarmName) -siteName $(siteName) -keyVaultName $(keyVaultName)
-        deploymentMode: Complete
-        deploymentName: Microsoft.VisualStudio
+        deploymentMode: Incremental
+        deploymentName: Microsoft.AzureDevOps
   - job: 'Functions'
     pool:
       vmImage: 'ubuntu-latest'
